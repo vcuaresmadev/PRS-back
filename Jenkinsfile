@@ -100,7 +100,7 @@ pipeline {
         failure {
             echo '❌ Pipeline falló!'
             slackSend(
-                channel: '#prs-revisión',
+                channel: '#all-pau',
                 color: 'danger',
                 message: """
                 ❌ *BUILD FALLIDO*
