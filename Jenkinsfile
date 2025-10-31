@@ -7,7 +7,7 @@ pipeline {
     }
 
     environment {
-        GITHUB_REPO = 'https://github.com/MariaLazaroVelarde/PRS-back.git'
+        GITHUB_REPO = 'https://github.com/vcuaresmadev/PRS-back'
         MAVEN_OPTS = '-Xmx1024m'
     }
 
@@ -70,7 +70,7 @@ pipeline {
                     sh '''
                         mvn clean verify sonar:sonar \
                             -Dsonar.projectKey=PRS-Back \
-                            -Dsonar.organization=marialazaro \
+                            -Dsonar.organization=victorcuaresma \
                             -Dsonar.host.url=https://sonarcloud.io \
                             -Dsonar.token=$SONAR_TOKEN
                     '''
@@ -87,7 +87,7 @@ pipeline {
         success {
             echo '✅ Pipeline ejecutado con éxito!'
             slackSend(
-                channel: '#prs-revisión',
+                channel: '#all-pau',
                 color: 'good',
                 message: """
                 ✅ *BUILD EXITOSO*
