@@ -1,0 +1,187 @@
+spring:
+     application:
+          name: ${NOMBRE_MICROSERVICIO:vg-ms-distribution}
+     data:
+          mongodb:
+               uri: mongodb+srv://${MONGO_USERNAME:sistemajass}:${MONGO_PASSWORD:ZC7O1Ok40SwkfEje}@sistemajass.jn6cpoz.mongodb.net/${MONGO_DATABASE:JASS_DIGITAL}?retryWrites=true&w=majority
+     web:
+          resources:
+               cache:
+                    period: 0
+     security:
+          oauth2:
+               resourceserver:
+                    jwt:
+                         issuer-uri: https://lab.vallegrande.edu.pe/jass/keycloak/realms/sistema-jass
+                         jwk-set-uri: https://lab.vallegrande.edu.pe/jass/keycloak/realms/sistema-jass/protocol/openid-connect/certs
+     cloud:
+          compatibility-verifier:
+               enabled: false
+
+# =============================================================================
+# CONFIGURACIÓN DEL SERVIDOR
+# =============================================================================
+server:
+     port: 8086
+     servlet:
+          context-path: /jass/ms-distribution
+     forward-headers-strategy: framework
+
+# =============================================================================
+# CONFIGURACIÓN DE SEGURIDAD INTERNA (JWE)
+# =============================================================================
+jwe:
+  internal:
+    # Secreto compartido con el Gateway para la comunicación interna.
+    secret: ${JWE_INTERNAL_SECRET:jass-microservices-internal-secret-2025-change-in-production}
+    # Tiempo de expiración del token en segundos (86400s = 24 horas)
+    expiration: ${JWE_INTERNAL_EXPIRATION:86400}
+    # Emisor del token (debe coincidir con el del gateway)
+    issuer: ${JWE_INTERNAL_ISSUER:ms-distribution-internal}
+    # Audiencia del token (debe coincidir con la configurada en el gateway)
+    audience: ${JWE_INTERNAL_AUDIENCE:jass-microservices}
+
+# CORS configuration removed - handled by gateway
+
+
+# =============================================================================
+# CONFIGURACIÓN DE DOCUMENTACIÓN (OpenAPI/Swagger)
+# =============================================================================
+springdoc:
+     api-docs:
+          path: /v3/api-docs
+          enabled: true
+
+     swagger-ui:
+          path: /swagger-ui.html
+          try-it-out-enabled: true
+          operations-sorter: method
+          tags-sorter: alpha
+          display-request-duration: true
+          disable-swagger-default-url: true
+
+     show-actuator: false
+
+ 
+# =============================================================================
+# INFORMACIÓN DE LA APLICACIÓN
+# =============================================================================
+app:
+     name: Microservicio de Distribución
+     description: Microservicio para gestión de Distribución del Sistema JASS Digital
+     version: 2.0.0
+     organization: Valle Grande
+
+# =============================================================================
+# CONFIGURACIÓN DE CLIENTES EXTERNOS (OTROS MICROSERVICIOS)
+# =============================================================================
+microservices:
+     organization:
+          name: ms-organizaciones
+          url: https://lab.vallegrande.edu.pe/jass/ms-organization/api/admin
+          timeout: 5000
+
+# =============================================================================
+# CONFIGURACIÓN DE SERVICIOS EXTERNOS
+# =============================================================================
+user-service:
+     base-url: ${USER_SERVICE_BASE_URL:https://lab.vallegrande.edu.pe/jass/ms-users/api/admin}
+
+organization-service:
+     base-url: ${ORGANIZATION_SERVICE_BASE_URL:https://lab.vallegrande.edu.pe/jass/ms-organization/api/admin}
+     token: ${ORGANIZATION_SERVICE_TOKEN:default-token-change-in-production}
+
+
+# =============================================================================
+# CONFIGURACIÓN DE ACTUATOR (MONITOREO)
+# =============================================================================
+management:
+     endpoints:
+          web:
+               exposure:
+                    include: health,info,metrics,env
+               base-path: /actuator
+
+     endpoint:
+          health:
+               show-details: when-authorized
+               show-components: always
+
+     info:
+          env:
+               enabled: true
+          git:
+               mode: full
+
+# =============================================================================
+# CONFIGURACIÓN DE LOGGING
+# =============================================================================
+logging:
+     level:
+          root: INFO
+          pe.edu.vallegrande: DEBUG
+          org.springframework.data.mongodb: WARN
+          org.mongodb.driver: WARN
+          reactor.netty: DEBUG
+          org.springframework.web.reactive.function.client: DEBUG
+          org.springframework.web.reactive.function.client.ExchangeFunctions: TRACE
+
+     pattern:
+          console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+          file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+     file:
+          name: logs/distribution.log
+          max-size: 10MB
+          max-history: 10
+
+
+# =============================================================================
+# CONFIGURACIÓN ADICIONAL DE LOGGING (COMENTADA - USAR LA CONFIGURACIÓN PRINCIPAL)
+# =============================================================================
+# Esta configuración está comentada porque ya existe una configuración principal de logging arriba
+# Descomenta solo si necesitas configuraciones específicas adicionales
+
+
+# =============================================================================
+# CONFIGURACIÓN DE VALIDACIÓN
+# =============================================================================
+validation:
+     user:
+          code:
+               prefix: USR
+               length: 7
+          document:
+               dni-length: 8
+               passport-min-length: 6
+               passport-max-length: 12
+
+# =============================================================================
+# CONFIGURACIÓN ESPECÍFICA POR AMBIENTE
+# =============================================================================
+---
+spring:
+     config:
+          activate:
+               on-profile: dev
+
+logging:
+     level:
+          pe.edu.vallegrande: DEBUG
+          org.springframework.data.mongodb: DEBUG
+
+---
+spring:
+     config:
+          activate:
+               on-profile: prod
+
+logging:
+     level:
+          root: WARN
+          pe.edu.vallegrande: INFO
+
+server:
+     error:
+          include-stacktrace: never
+          include-message: never

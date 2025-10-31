@@ -1,0 +1,14 @@
+de:
+  flapdoodle:
+    mongodb:
+      embedded:
+        version: 5.0.5
+
+spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.security.reactive.ReactiveSecurityAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.reactive.ReactiveUserDetailsServiceAutoConfiguration
+  data:
+    mongodb:
+      auto-index-creation: true
