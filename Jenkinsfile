@@ -70,7 +70,7 @@ pipeline {
                     sh '''
                         mvn clean verify sonar:sonar \
                             -Dsonar.projectKey=PRS-Back \
-                            -Dsonar.organization=CC-VictorCuaresma \
+                            -Dsonar.organization=vcuaresmadev \
                             -Dsonar.host.url=https://sonarcloud.io \
                             -Dsonar.token=$SONAR_TOKEN
                     '''
