@@ -68,11 +68,11 @@ pipeline {
                 echo '🔍 Analizando código con SonarCloud...'
                 withCredentials([string(credentialsId: 'sonar', variable: 'SONAR_TOKEN')]) {
                     sh '''
-                        mvn clean verify sonar:sonar \
-                            -Dsonar.projectKey=PRS-Back \
-                            -Dsonar.organization=cc-victorcuaresma \
-                            -Dsonar.host.url=https://sonarcloud.io \
-                            -Dsonar.token=$SONAR_TOKEN
+                mvn clean verify sonar:sonar \
+                    -Dsonar.projectKey=PRS-Back \
+                    -Dsonar.organization=victorcuaresma \
+                    -Dsonar.host.url=https://sonarcloud.io \
+                    -Dsonar.token=$SONAR_TOKEN
                     '''
                 }
             }
